@@ -46,9 +46,7 @@ module.exports = {
     },
     plugins: [
       new CopyWebpackPlugin([
-          {from: './manifest.json'},
-          {from: './popup.html'},
-          {from: './background.js'}
+          {from: './assets'},
       ])
     ],
     devServer: {
