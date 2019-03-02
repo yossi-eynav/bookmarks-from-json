@@ -60,7 +60,7 @@ async function syncJsonFiles() {
     console.log('jsonUrl', jsonUrls)
     jsonUrls.forEach(async (jsonUrl) => {
 
-        const json = await fetch(jsonUrl).then(r => r.json()).catch(() => null);
+        const json = await fetch(jsonUrl, {mode: 'no-cors'}).then(r => r.json()).catch(() => null);
         if(json) {
             syncBookmarks(json);
         }

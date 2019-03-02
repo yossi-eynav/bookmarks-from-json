@@ -14,6 +14,6 @@
   "description": "Create a bookmark tree from a json, use it to share bookmarks across teams for free.",
   "manifest_version": 2,
   "name": "bookmarks-from-json",
-  "permissions": [ "bookmarks", "storage", "webRequest", "https://*/"  ],
+  "permissions": [ "bookmarks", "storage"],
   "version": "0.1.0"
 }
