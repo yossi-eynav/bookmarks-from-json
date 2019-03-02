@@ -25,7 +25,7 @@ async function syncBookmarks(json) {
     const rootFolderName = json[0].title;
     const bookmarkStorageKey = `${rootFolderName}_rootBookmarkId`;
 
-    const results = await get({key: bookmarkStorageKey});
+    const results = await getLocal({key: bookmarkStorageKey});
     const rootBookmarkId = results[bookmarkStorageKey];
 
     const rootBookmarks =  await getBookmarks({id: rootBookmarkId});
@@ -45,8 +45,8 @@ async function syncBookmarks(json) {
 
     if(!rootBookmarkExists) {
         const {id} = await createBookmark(json[0]);
-        await save({key: bookmarkStorageKey, value: id});
-        await createNestedBookmarks({bookmarks: json, parentId: id});
+        await saveLocal({key: bookmarkStorageKey, value: id});
+        await createNestedBookmarks({bookmarks: json[0].children, parentId: id});
     }
 }
 
@@ -67,6 +67,7 @@ async function syncJsonFiles() {
 
 }
 
+syncJsonFiles();
 setInterval(() => {
     syncJsonFiles();
 }, 60000)
@@ -90,14 +91,6 @@ async function createNestedBookmarks({bookmarks, parentId}) {
     }
 }
 
-function save({key, value}){
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.set({[key]: value}, function() {
-            resolve(value);
-        });
-    })
-}
-
 function get({key}){
     return new Promise((resolve, reject) => {
         chrome.storage.sync.get([key], function(result) {
@@ -105,6 +98,23 @@ function get({key}){
         });
     })
 }
+
+function saveLocal({key, value}){
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.set({[key]: value}, function() {
+            resolve(value);
+        });
+    })
+}
+
+function getLocal({key}){
+    return new Promise((resolve, reject) => {
+        chrome.storage.local.get([key], function(result) {
+            resolve(result);
+        });
+    })
+}
+
 
 function createBookmark({parentId, title, url}) {
     return new Promise((resolve, reject) => {
@@ -114,7 +124,6 @@ function createBookmark({parentId, title, url}) {
         }
         chrome.bookmarks.create(payload,
             function(newFolder) {
-                console.log(newFolder);
                 resolve(newFolder);
             });
     });
