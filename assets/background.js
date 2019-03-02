@@ -14,7 +14,7 @@ function didRootChanged({rootBookmarks, json}) {
     }
 
     if (rootBookmarks.children) {
-        if(rootBookmarks.children.length !== json.children.length) { return false; }
+        if(rootBookmarks.children.length !== json.children.length) { return true; }
         return rootBookmarks.children.some((child, index) => didRootChanged({rootBookmarks: child, json: json.children[index] }))
     } else {
         return false;
@@ -31,6 +31,7 @@ async function syncBookmarks(json) {
     const rootBookmarks =  await getBookmarks({id: rootBookmarkId});
     const rootBookmarkExists = Array.isArray(rootBookmarks);
 
+    console.log(rootBookmarkExists, rootBookmarks)
     if(rootBookmarkExists) {
         if(didRootChanged({rootBookmarks: {children: rootBookmarks[0].children}, json:  {children: json[0].children}})) {
             console.warn('root folder changed!')
@@ -40,10 +41,10 @@ async function syncBookmarks(json) {
                 await removeBookmarkTree({id: rootChildren[index].id});
             }
             await createNestedBookmarks({bookmarks: json[0].children, parentId: rootBookmarkId});
+        } else {
+            console.info('Root did not changes!')
         }
-    }
-
-    if(!rootBookmarkExists) {
+    } else {
         const {id} = await createBookmark(json[0]);
         await saveLocal({key: bookmarkStorageKey, value: id});
         await createNestedBookmarks({bookmarks: json[0].children, parentId: id});
