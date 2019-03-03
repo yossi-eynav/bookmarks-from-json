@@ -92,10 +92,13 @@
                             status: 'success',
                             title: data[0].title,
                             data
-                        })).catch(() => ({
+                        })).catch((e) => {
+                          console.error(e);
+                          return {
                             url,
                             status: 'failure'
-                        }))
+                          }
+                        })
                     }));
 
                     console.log(data);
