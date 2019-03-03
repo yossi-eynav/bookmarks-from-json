@@ -87,7 +87,7 @@
             tableInit() {
                 chrome.storage.sync.get('jsonUrls', async (result) => {
                     const data = await Promise.all((result.jsonUrls || []).map(async (url) => {
-                        return fetch(url).then((r) => r.json()).then(data => ({
+                        return fetch(url, {mode: 'no-cors'}).then((r) => r.json()).then(data => ({
                             url,
                             status: 'success',
                             title: data[0].title,
