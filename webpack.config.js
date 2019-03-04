@@ -49,9 +49,5 @@ module.exports = {
           {from: './assets'},
       ])
     ],
-    devServer: {
-        historyApiFallback: true,
-        noInfo: true
-    },
     devtool: '#eval-source-map'
 };
